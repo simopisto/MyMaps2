@@ -172,7 +172,6 @@ public class MapsActivity extends FragmentActivity {
         } catch (Exception e) {
             Log.d("InputStream", e.getLocalizedMessage());
         }
-
         return result;
     }
 
