@@ -37,6 +37,7 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity {
 
     private String SERVER_IP = "pi.wha.la";
+    private int SERVER_PORT = 1300;
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager locationManager;
@@ -89,6 +90,7 @@ public class MapsActivity extends FragmentActivity {
         setUpMapIfNeeded();
     }
 
+    @Override
     protected void onPause() {
         super.onPause();
         locationManager.removeUpdates(locationListener);
@@ -139,7 +141,8 @@ public class MapsActivity extends FragmentActivity {
         LatLng myPos = locToLatLng(location);
         /*LatLng*/ //otherPos = getRandomLatLng(location);
 
-        new HttpAsyncTask().execute("http://" + SERVER_IP + ":1300/?position="+myPos.latitude+","+myPos.longitude+"&id=0");
+        new HttpAsyncTask().execute("http://" + SERVER_IP + ":" + SERVER_PORT + "/?position="+myPos.latitude+","+myPos.longitude+"&id=0");
+        //new HttpAsyncTask().execute("http://pi.wha.la:1300/?position="+myPos.latitude+","+myPos.longitude+"&id=0");
         //mMap.addMarker(new MarkerOptions().position(myPos).title("Me"));
     }
 
@@ -229,38 +232,38 @@ public class MapsActivity extends FragmentActivity {
                 e.printStackTrace();
             }
         }
-    }
 
-    private List<LatLng> decodePoly(String encoded) {
+        private List<LatLng> decodePoly(String encoded) {
 
-        List<LatLng> poly = new ArrayList<LatLng>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
+            List<LatLng> poly = new ArrayList<LatLng>();
+            int index = 0, len = encoded.length();
+            int lat = 0, lng = 0;
 
-        while (index < len) {
-            int b, shift = 0, result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lat += dlat;
+            while (index < len) {
+                int b, shift = 0, result = 0;
+                do {
+                    b = encoded.charAt(index++) - 63;
+                    result |= (b & 0x1f) << shift;
+                    shift += 5;
+                } while (b >= 0x20);
+                int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+                lat += dlat;
 
-            shift = 0;
-            result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lng += dlng;
+                shift = 0;
+                result = 0;
+                do {
+                    b = encoded.charAt(index++) - 63;
+                    result |= (b & 0x1f) << shift;
+                    shift += 5;
+                } while (b >= 0x20);
+                int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+                lng += dlng;
 
-            LatLng p = new LatLng( (((double) lat / 1E5)), (((double) lng / 1E5) ));
-            poly.add(p);
+                LatLng p = new LatLng( (((double) lat / 1E5)), (((double) lng / 1E5) ));
+                poly.add(p);
+            }
+
+            return poly;
         }
-
-        return poly;
     }
 }
