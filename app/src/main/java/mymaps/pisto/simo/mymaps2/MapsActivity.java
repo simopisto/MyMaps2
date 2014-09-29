@@ -36,6 +36,8 @@ import java.util.List;
 
 public class MapsActivity extends FragmentActivity {
 
+    private String SERVER_IP = "pi.wha.la";
+
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -137,7 +139,7 @@ public class MapsActivity extends FragmentActivity {
         LatLng myPos = locToLatLng(location);
         /*LatLng*/ //otherPos = getRandomLatLng(location);
 
-        new HttpAsyncTask().execute("http://192.168.1.120:1300/?position="+myPos.latitude+","+myPos.longitude+"&id=0");
+        new HttpAsyncTask().execute("http://" + SERVER_IP + ":1300/?position="+myPos.latitude+","+myPos.longitude+"&id=0");
         //mMap.addMarker(new MarkerOptions().position(myPos).title("Me"));
     }
 
